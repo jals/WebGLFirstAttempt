@@ -12,32 +12,89 @@ function initGL(canvas) {
         alert("Could not initialise WebGL, sorry :-(");
     }
 
-    document.onkeyup = keyUp;
+    document.onkeyup = throttle(keyUp);
     //document.onkeydown = keyDown;
 }
 
-var menuUp = false;
+function throttle(fn) {
+  var threshhold = 250;
+  var last,
+      deferTimer;
+  return function () {
+    var context = this;
+
+    var now = +new Date,
+        args = arguments;
+    if (last && now < last + threshhold) {
+      // hold on to it
+      clearTimeout(deferTimer);
+      deferTimer = setTimeout(function () {
+        last = now;
+        fn.apply(context, args);
+      }, threshhold);
+    } else {
+      last = now;
+      fn.apply(context, args);
+    }
+  };
+}
+
+var menuUp = true;
 var selected = 3;
+var oldSelected = -1;
+var selectionChanged = false;
 
 function keyUp(e){
   //  console.log(e.keyCode);
-    if(e.keyCode == 77){
+    if(e.keyCode == 77){ //m
         if(menuUp){
+            selected = -1;
+            oldSelected = -1;
             menuUp = false;
-            fadeIn(1);
-        } else {
-            menuUp = true;
             fadeOut(7);
+        } else {
+            selected = 3;
+            selectionChanged = true;
+            subMoveOutOffsetCurrent = -6.6;
+            subMoveOutOffsetCurrent2 = -6.6;
+            subMoveOutOffsetCurrent3 = -6.6;
+            subMoveOutOffsetCurrent4 = -6.6;
+            subMoveOutOffsetOld = -5.4;
+            subMoveOutOffsetOld2 = -5.4;
+            subMoveOutOffsetOld3 = -5.4;
+            subMoveOutOffsetOld4 = -5.4;
+            menuUp = true;
+            fadeIn(1);
         }
-    } else if(e.keyCode == 37){
-        if(selected > 0){
+    } else if(e.keyCode == 37){ //left
+        if(menuUp && selected > 0){
+            oldSelected = selected;
             selected -=1 ;
+            selectionChanged = true;
+            subMoveOutOffsetCurrent = -6.6;
+            subMoveOutOffsetCurrent2 = -6.6;
+            subMoveOutOffsetCurrent3 = -6.6;
+            subMoveOutOffsetCurrent4 = -6.6;
+            subMoveOutOffsetOld = -5.4;
+            subMoveOutOffsetOld2 = -5.4;
+            subMoveOutOffsetOld3 = -5.4;
+            subMoveOutOffsetOld4 = -5.4;
         }
     } else if(e.keyCode == 38){
         console.log('up');
-    } else if(e.keyCode == 39){
-        if(selected < 6){
+    } else if(e.keyCode == 39){ //right
+        if(menuUp && selected < 6){
+            oldSelected = selected;
             selected += 1;
+            selectionChanged = true;
+            subMoveOutOffsetCurrent = -6.6;
+            subMoveOutOffsetCurrent2 = -6.6;
+            subMoveOutOffsetCurrent3 = -6.6;
+            subMoveOutOffsetCurrent4 = -6.6;
+            subMoveOutOffsetOld = -5.4;
+            subMoveOutOffsetOld2 = -5.4;
+            subMoveOutOffsetOld3 = -5.4;
+            subMoveOutOffsetOld4 = -5.4;
         }
     } else if(e.keyCode == 40){
         console.log('down');
@@ -313,6 +370,15 @@ var moveOutOffset2 = offsetVal;
 var moveOutOffset3 = offsetVal;
 var moveOutOffset4 = offsetVal;
 
+var subMoveOutOffsetCurrent = -5.0;
+var subMoveOutOffsetCurrent2 = -5.0;
+var subMoveOutOffsetCurrent3 = -5.0;
+var subMoveOutOffsetCurrent4 = -5.0;
+var subMoveOutOffsetOld = -6.6;
+var subMoveOutOffsetOld2 = -6.6;
+var subMoveOutOffsetOld3 = -6.6;
+var subMoveOutOffsetOld4 = -6.6;
+
 function drawScene() {
     gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -322,7 +388,7 @@ function drawScene() {
     mat4.translate(mvMatrix, [0.0, moveOutOffset1, -8.0]);
 
     var diff = 2.1;
-    var diff2 = 0.91
+    var diff2 = 0.87;
     addButton(-3*diff, 0, moveOutOffset4, textureSettings, false);
     addButton(-2*diff, 0, moveOutOffset3, textureApps, false);
     addButton(-1*diff, 0, moveOutOffset2, textureHome, false);
@@ -332,24 +398,45 @@ function drawScene() {
     addButton(3*diff, 0, moveOutOffset4, textureSearch, false);
 
     if(selected == 2){
-        addButton(-1*diff, diff2, moveOutOffset1, subTextureHome1, true);
-        addButton(-1*diff, 2*diff2, moveOutOffset1, subTextureHome2, true);
-        addButton(-1*diff, 3*diff2, moveOutOffset1, subTextureHome3, true);
-        addButton(-1*diff, 4*diff2, moveOutOffset1, subTextureHome4, true);
+        addButton(-1*diff, diff2, subMoveOutOffsetCurrent, subTextureHome1, true);
+        addButton(-1*diff, 2*diff2, subMoveOutOffsetCurrent2, subTextureHome2, true);
+        addButton(-1*diff, 3*diff2, subMoveOutOffsetCurrent3, subTextureHome3, true);
+        addButton(-1*diff, 4*diff2, subMoveOutOffsetCurrent4, subTextureHome4, true);
     } else if(selected == 3){
-        addButton(0, diff2, moveOutOffset1, subTextureTV1, true);
-        addButton(0, 2*diff2, moveOutOffset1, subTextureTV2, true);
+        addButton(0, diff2, subMoveOutOffsetCurrent, subTextureTV1, true);
+        addButton(0, 2*diff2, subMoveOutOffsetCurrent2, subTextureTV2, true);
     } else if(selected == 4){
-        addButton(diff, diff2, moveOutOffset1, subTextureRecordings1, true);
-        addButton(diff, 2*diff2, moveOutOffset1, subTextureRecordings2, true);
+        addButton(diff, diff2, subMoveOutOffsetCurrent, subTextureRecordings1, true);
+        addButton(diff, 2*diff2, subMoveOutOffsetCurrent2, subTextureRecordings2, true);
     } else if(selected == 5){
-        addButton(2*diff, diff2, moveOutOffset1, subTextureTVShows1, true);
-        addButton(2*diff, 2*diff2, moveOutOffset1, subTextureTVShows2, true);
+        addButton(2*diff, diff2, subMoveOutOffsetCurrent, subTextureTVShows1, true);
+        addButton(2*diff, 2*diff2, subMoveOutOffsetCurrent2, subTextureTVShows2, true);
     } else if(selected == 6){
-        addButton(3*diff, diff2, moveOutOffset1, subTextureSearch1, true);
-        addButton(3*diff, 2*diff2, moveOutOffset1, subTextureSearch2, true);
-        addButton(3*diff, 3*diff2, moveOutOffset1, subTextureSearch3, true);
-        addButton(3*diff, 4*diff2, moveOutOffset1, subTextureSearch4, true);
+        addButton(3*diff, diff2, subMoveOutOffsetCurrent, subTextureSearch1, true);
+        addButton(3*diff, 2*diff2, subMoveOutOffsetCurrent2, subTextureSearch2, true);
+        addButton(3*diff, 3*diff2, subMoveOutOffsetCurrent3, subTextureSearch3, true);
+        addButton(3*diff, 4*diff2, subMoveOutOffsetCurrent4, subTextureSearch4, true);
+    }
+
+    if(oldSelected == 2){
+        addButton(-1*diff, diff2, subMoveOutOffsetOld, subTextureHome1, true);
+        addButton(-1*diff, 2*diff2, subMoveOutOffsetOld2, subTextureHome2, true);
+        addButton(-1*diff, 3*diff2, subMoveOutOffsetOld3, subTextureHome3, true);
+        addButton(-1*diff, 4*diff2, subMoveOutOffsetOld4, subTextureHome4, true);
+    } else if(oldSelected == 3){
+        addButton(0, diff2, subMoveOutOffsetOld, subTextureTV1, true);
+        addButton(0, 2*diff2, subMoveOutOffsetOld2, subTextureTV2, true);
+    } else if(oldSelected == 4){
+        addButton(diff, diff2, subMoveOutOffsetOld, subTextureRecordings1, true);
+        addButton(diff, 2*diff2, subMoveOutOffsetOld2, subTextureRecordings2, true);
+    } else if(oldSelected == 5){
+        addButton(2*diff, diff2, subMoveOutOffsetOld, subTextureTVShows1, true);
+        addButton(2*diff, 2*diff2, subMoveOutOffsetOld2, subTextureTVShows2, true);
+    } else if(oldSelected == 6){
+        addButton(3*diff, diff2, subMoveOutOffsetOld, subTextureSearch1, true);
+        addButton(3*diff, 2*diff2, subMoveOutOffsetOld2, subTextureSearch2, true);
+        addButton(3*diff, 3*diff2, subMoveOutOffsetOld3, subTextureSearch3, true);
+        addButton(3*diff, 4*diff2, subMoveOutOffsetOld4, subTextureSearch4, true);
     }
 }
 
@@ -379,6 +466,71 @@ function addButton(offset, heightOffset, moveOutOffset, texture, isSmaller){
 
 function animate() 
 {    if(menuUp){
+         if(moveOutOffset1 < offsetVal){
+            moveOutOffset1+=0.4; 
+            setTimeout(function() {
+                moveOutOffset2+=0.4;
+                setTimeout(function() {
+                    moveOutOffset3+=0.4;
+                    setTimeout(function() {
+                        moveOutOffset4+=0.4;
+                    }, 100);
+                }, 100);
+            }, 100);
+        }
+        if(selectionChanged){
+            if(subMoveOutOffsetCurrent < -5.0 && subMoveOutOffsetOld > -6.6){
+                subMoveOutOffsetCurrent+=0.2;
+                setTimeout(function() {
+                    subMoveOutOffsetCurrent2+=0.2;
+                    setTimeout(function() {
+                        subMoveOutOffsetCurrent3+=0.2;
+                        setTimeout(function() {
+                            subMoveOutOffsetCurrent4+=0.2;
+                        }, 50);
+                    }, 50);
+                }, 50);
+                subMoveOutOffsetOld-=0.2;
+                setTimeout(function() {
+                    subMoveOutOffsetOld2-=0.2;
+                    setTimeout(function() {
+                        subMoveOutOffsetOld3-=0.2;
+                        setTimeout(function() {
+                            subMoveOutOffsetOld4-=0.2;
+                        }, 50);
+                    }, 50);
+                }, 50);
+            } else if (subMoveOutOffsetCurrent >= -5.0 && subMoveOutOffsetOld > -6.6){
+                subMoveOutOffsetOld-=0.2;
+                 setTimeout(function() {
+                    subMoveOutOffsetOld2-=0.2;
+                    setTimeout(function() {
+                        subMoveOutOffsetOld3-=0.2;
+                        setTimeout(function() {
+                            subMoveOutOffsetOld4-=0.2;
+                        }, 50);
+                    }, 50);
+                }, 50);
+            } else if (subMoveOutOffsetCurrent < -5.0 && subMoveOutOffsetOld <= -6.6){
+                subMoveOutOffsetCurrent+=0.2;
+                setTimeout(function() {
+                    subMoveOutOffsetCurrent2+=0.2;
+                    setTimeout(function() {
+                        subMoveOutOffsetCurrent3+=0.2;
+                        setTimeout(function() {
+                            subMoveOutOffsetCurrent4+=0.2;
+                        }, 50);
+                    }, 50);
+                }, 50);
+            } else {
+                oldSelected = -1;
+                selectionChanged = false;
+            }
+           // smoo1Timeout();
+           // smoo2Timeout();
+           // selectionChanged = false;
+        }
+    } else {
         if(moveOutOffset1 > -10){
             moveOutOffset1-=0.8; 
             setTimeout(function() {
@@ -391,23 +543,8 @@ function animate()
                 }, 50);
             }, 50);
         }
-        
-    } else {
-        if(moveOutOffset1 < offsetVal){
-            moveOutOffset1+=0.4; 
-            setTimeout(function() {
-                moveOutOffset2+=0.4;
-                setTimeout(function() {
-                    moveOutOffset3+=0.4;
-                    setTimeout(function() {
-                        moveOutOffset4+=0.4;
-                    }, 100);
-                }, 100);
-            }, 100);
-        }
     }
 }
-
 
 function tick() {
     window.webkitRequestAnimationFrame(tick);
