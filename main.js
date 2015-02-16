@@ -43,6 +43,7 @@ var subSelected = 0;
 var subSelectedArray = [0, 4, 4, 2, 2, 2, 4];
 var oldSelected = -1;
 var selectionChanged = false;
+var green = false;
 
 function keyUp(e){
   //  console.log(e.keyCode);
@@ -79,6 +80,12 @@ function keyUp(e){
     } else if(e.keyCode == 40){ //down
         if(menuUp && subSelected > 0){
             subSelected-=1;
+        }
+    } else if(e.keyCode == 71){ //g
+        if(green){
+            green = false;
+        } else {
+            green = true;
         }
     }
     initTextures();
@@ -206,15 +213,30 @@ var subTextureSearch2;
 var subTextureSearch3;
 var subTextureSearch4;
 
+
 function initTextures() {
-    textureSettings = getTexture("SETTINGS", "img/settings.png", selected == 0 && subSelected == 0); 
-    textureApps = getTexture("APPS", "img/apps.png", selected == 1 && subSelected == 0); 
-    textureHome = getTexture("JARRED", "img/Home.png", selected == 2 && subSelected == 0); 
-    textureTV = getTexture("LIVE TV", "img/Live_TV.png", selected == 3 && subSelected == 0); 
-    textureRecordings = getTexture("RECORDINGS", "img/recorded.png", selected == 4 && subSelected == 0); 
-    textureTVShows = getTexture("TV SHOWS", "img/on_demand.png", selected == 5 && subSelected == 0); 
-    textureSearch = getTexture("SEARCH", "img/search.png", selected == 6 && subSelected == 0); 
+    if(green){
+        textureSettings = getTexture("SETTINGS", "img/settings_gr.png", selected == 0 && subSelected == 0); 
+        textureApps = getTexture("APPS", "img/apps_gr.png", selected == 1 && subSelected == 0); 
+        textureHome = getTexture("JARRED", "img/Home_gr.png", selected == 2 && subSelected == 0); 
+        textureTV = getTexture("LIVE TV", "img/Live_TV_gr.png", selected == 3 && subSelected == 0); 
+        textureRecordings = getTexture("RECORDINGS", "img/recorded_gr.png", selected == 4 && subSelected == 0); 
+        textureTVShows = getTexture("TV SHOWS", "img/on_demand_gr.png", selected == 5 && subSelected == 0); 
+        textureSearch = getTexture("SEARCH", "img/search_gr.png", selected == 6 && subSelected == 0); 
+    } else {
+        textureSettings = getTexture("SETTINGS", "img/settings.png", selected == 0 && subSelected == 0); 
+        textureApps = getTexture("APPS", "img/apps.png", selected == 1 && subSelected == 0); 
+        textureHome = getTexture("JARRED", "img/Home.png", selected == 2 && subSelected == 0); 
+        textureTV = getTexture("LIVE TV", "img/Live_TV.png", selected == 3 && subSelected == 0); 
+        textureRecordings = getTexture("RECORDINGS", "img/recorded.png", selected == 4 && subSelected == 0); 
+        textureTVShows = getTexture("TV SHOWS", "img/on_demand.png", selected == 5 && subSelected == 0); 
+        textureSearch = getTexture("SEARCH", "img/search.png", selected == 6 && subSelected == 0); 
+    }
    
+    subTextureApps1 = getIconTexture("img/youtube.png", selected == 1 && subSelected == 1);
+    subTextureApps2 = getIconTexture("img/netflix.png", selected == 1 && subSelected == 2);
+    subTextureApps3 = getIconTexture("img/soccer.png", selected == 1 && subSelected == 3);
+    subTextureApps4 = getIconTexture("img/ski.png", selected == 1 && subSelected == 4);
     subTextureHome1 = getText("FAMILY", selected == 2 && subSelected == 1);
     subTextureHome2 = getText("ANDREA", selected == 2 && subSelected == 2);
     subTextureHome3 = getText("COOPER", selected == 2 && subSelected == 3);
@@ -254,6 +276,32 @@ function getTexture(text, imagePath, isSelected){
     texture.image = new Image();
     img.onload = function () {
         ctx.drawImage(img, -17, -4, ctx.canvas.width/2-img.width/2, ctx.canvas.height/2-img.height/2-5, 0, 0, 200, 100);
+        handleTextureLoaded(canvas, texture);
+    }    
+    img.src = imagePath;
+
+    return texture;
+}
+
+function getIconTexture(imagePath, isSelected){
+    var canvas = document.createElement('canvas');
+    var ctx = canvas.getContext('2d');
+    canvas.width  = 200;
+    canvas.height = 150;
+    var img = new Image();
+
+    if(isSelected){
+        ctx.fillStyle = 'rgba(29, 136, 114, 0.5)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    var texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([77, 77, 77, 255]));
+    
+    texture.image = new Image();
+    img.onload = function () {
+        ctx.drawImage(img, -5, -2, ctx.canvas.width/2-img.width/2, ctx.canvas.height/2-img.height/2, 0, 0, 250, 140);
         handleTextureLoaded(canvas, texture);
     }    
     img.src = imagePath;
@@ -444,64 +492,75 @@ function drawScene() {
     var diff = 2.1;
     var diff2 = 0.87;
 
-    addButton(-3*diff + test[0], 0, moveOutOffset4, textureSettings, false);
-    addButton(-2*diff + test[1], 0, moveOutOffset3, textureApps, false);
-    addButton(-1*diff + test[2], 0, moveOutOffset2, textureHome, false);
-    addButton(0 + test[3], 0, moveOutOffset1, textureTV, false);
-    addButton(diff + test[4], 0, moveOutOffset2, textureRecordings, false);
-    addButton(2*diff + test[5], 0, moveOutOffset3, textureTVShows, false);
-    addButton(3*diff + test[6], 0, moveOutOffset4, textureSearch, false);
+    addButton(-3*diff + test[0], 0, moveOutOffset4, textureSettings, false, false);
+    addButton(-2*diff + test[1], 0, moveOutOffset3, textureApps, false, false);
+    addButton(-1*diff + test[2], 0, moveOutOffset2, textureHome, false, false);
+    addButton(0 + test[3], 0, moveOutOffset1, textureTV, false, false);
+    addButton(diff + test[4], 0, moveOutOffset2, textureRecordings, false, false);
+    addButton(2*diff + test[5], 0, moveOutOffset3, textureTVShows, false, false);
+    addButton(3*diff + test[6], 0, moveOutOffset4, textureSearch, false, false);
 
-    if(selected == 2){
-        addButton(-1*diff + test[2], diff2, subMoveOutOffsetCurrent, subTextureHome1, true);
-        addButton(-1*diff + test[2], 2*diff2, subMoveOutOffsetCurrent2, subTextureHome2, true);
-        addButton(-1*diff + test[2], 3*diff2, subMoveOutOffsetCurrent3, subTextureHome3, true);
-        addButton(-1*diff + test[2], 4*diff2, subMoveOutOffsetCurrent4, subTextureHome4, true);
+    if(selected == 1){
+        addButton(-2*diff + test[1], 1.5, subMoveOutOffsetCurrent, subTextureApps1, false, true); 
+        addButton(-2*diff + test[1] + diff/2, 1.5, subMoveOutOffsetCurrent, subTextureApps2, false, true); 
+        addButton(-2*diff + test[1], 2*1.5, subMoveOutOffsetCurrent, subTextureApps3, false, true); 
+        addButton(-2*diff + test[1] + diff/2, 2*1.5, subMoveOutOffsetCurrent, subTextureApps4, false, true); 
+    } else if(selected == 2){
+        addButton(-1*diff + test[2], diff2, subMoveOutOffsetCurrent, subTextureHome1, true, false);
+        addButton(-1*diff + test[2], 2*diff2, subMoveOutOffsetCurrent2, subTextureHome2, true, false);
+        addButton(-1*diff + test[2], 3*diff2, subMoveOutOffsetCurrent3, subTextureHome3, true, false);
+        addButton(-1*diff + test[2], 4*diff2, subMoveOutOffsetCurrent4, subTextureHome4, true, false);
     } else if(selected == 3){
-        addButton(0 + test[3], diff2, subMoveOutOffsetCurrent, subTextureTV1, true);
-        addButton(0 + test[3], 2*diff2, subMoveOutOffsetCurrent2, subTextureTV2, true);
+        addButton(0 + test[3], diff2, subMoveOutOffsetCurrent, subTextureTV1, true, false);
+        addButton(0 + test[3], 2*diff2, subMoveOutOffsetCurrent2, subTextureTV2, true, false);
     } else if(selected == 4){
-        addButton(diff + test[4], diff2, subMoveOutOffsetCurrent, subTextureRecordings1, true);
-        addButton(diff + test[4], 2*diff2, subMoveOutOffsetCurrent2, subTextureRecordings2, true);
+        addButton(diff + test[4], diff2, subMoveOutOffsetCurrent, subTextureRecordings1, true, false);
+        addButton(diff + test[4], 2*diff2, subMoveOutOffsetCurrent2, subTextureRecordings2, true, false);
     } else if(selected == 5){
-        addButton(2*diff + test[5], diff2, subMoveOutOffsetCurrent, subTextureTVShows1, true);
-        addButton(2*diff + test[5], 2*diff2, subMoveOutOffsetCurrent2, subTextureTVShows2, true);
+        addButton(2*diff + test[5], diff2, subMoveOutOffsetCurrent, subTextureTVShows1, true, false);
+        addButton(2*diff + test[5], 2*diff2, subMoveOutOffsetCurrent2, subTextureTVShows2, true, false);
     } else if(selected == 6){
-        addButton(3*diff + test[6], diff2, subMoveOutOffsetCurrent, subTextureSearch1, true);
-        addButton(3*diff + test[6], 2*diff2, subMoveOutOffsetCurrent2, subTextureSearch2, true);
-        addButton(3*diff + test[6], 3*diff2, subMoveOutOffsetCurrent3, subTextureSearch3, true);
-        addButton(3*diff + test[6], 4*diff2, subMoveOutOffsetCurrent4, subTextureSearch4, true);
+        addButton(3*diff + test[6], diff2, subMoveOutOffsetCurrent, subTextureSearch1, true, false);
+        addButton(3*diff + test[6], 2*diff2, subMoveOutOffsetCurrent2, subTextureSearch2, true, false);
+        addButton(3*diff + test[6], 3*diff2, subMoveOutOffsetCurrent3, subTextureSearch3, true, false);
+        addButton(3*diff + test[6], 4*diff2, subMoveOutOffsetCurrent4, subTextureSearch4, true, false);
     }
-
-    if(oldSelected == 2){
-        addButton(-1*diff + test[2], diff2, subMoveOutOffsetOld, subTextureHome1, true);
-        addButton(-1*diff + test[2], 2*diff2, subMoveOutOffsetOld2, subTextureHome2, true);
-        addButton(-1*diff + test[2], 3*diff2, subMoveOutOffsetOld3, subTextureHome3, true);
-        addButton(-1*diff + test[2], 4*diff2, subMoveOutOffsetOld4, subTextureHome4, true);
+    if(oldSelected == 1){
+        addButton(-2*diff + test[1], 1.5, subMoveOutOffsetOld, subTextureApps1, false, true);
+        addButton(-2*diff + test[1] + diff/2, 1.5, subMoveOutOffsetOld, subTextureApps2, false, true);
+        addButton(-2*diff + test[1], 2*1.5, subMoveOutOffsetOld, subTextureApps3, false, true);
+        addButton(-2*diff + test[1] + diff/2, 2*1.5, subMoveOutOffsetOld, subTextureApps4, false, true);
+    } else if(oldSelected == 2){
+        addButton(-1*diff + test[2], diff2, subMoveOutOffsetOld, subTextureHome1, true, false);
+        addButton(-1*diff + test[2], 2*diff2, subMoveOutOffsetOld2, subTextureHome2, true, false);
+        addButton(-1*diff + test[2], 3*diff2, subMoveOutOffsetOld3, subTextureHome3, true, false);
+        addButton(-1*diff + test[2], 4*diff2, subMoveOutOffsetOld4, subTextureHome4, true, false);
     } else if(oldSelected == 3){
-        addButton(0 + test[3], diff2, subMoveOutOffsetOld, subTextureTV1, true);
-        addButton(0 + test[3], 2*diff2, subMoveOutOffsetOld2, subTextureTV2, true);
+        addButton(0 + test[3], diff2, subMoveOutOffsetOld, subTextureTV1, true, false);
+        addButton(0 + test[3], 2*diff2, subMoveOutOffsetOld2, subTextureTV2, true, false);
     } else if(oldSelected == 4){
-        addButton(diff + test[4], diff2, subMoveOutOffsetOld, subTextureRecordings1, true);
-        addButton(diff + test[4], 2*diff2, subMoveOutOffsetOld2, subTextureRecordings2, true);
+        addButton(diff + test[4], diff2, subMoveOutOffsetOld, subTextureRecordings1, true, false);
+        addButton(diff + test[4], 2*diff2, subMoveOutOffsetOld2, subTextureRecordings2, true, false);
     } else if(oldSelected == 5){
-        addButton(2*diff + test[5], diff2, subMoveOutOffsetOld, subTextureTVShows1, true);
-        addButton(2*diff + test[5], 2*diff2, subMoveOutOffsetOld2, subTextureTVShows2, true);
+        addButton(2*diff + test[5], diff2, subMoveOutOffsetOld, subTextureTVShows1, true, false);
+        addButton(2*diff + test[5], 2*diff2, subMoveOutOffsetOld2, subTextureTVShows2, true, false);
     } else if(oldSelected == 6){
-        addButton(3*diff + test[6], diff2, subMoveOutOffsetOld, subTextureSearch1, true);
-        addButton(3*diff + test[6], 2*diff2, subMoveOutOffsetOld2, subTextureSearch2, true);
-        addButton(3*diff + test[6], 3*diff2, subMoveOutOffsetOld3, subTextureSearch3, true);
-        addButton(3*diff + test[6], 4*diff2, subMoveOutOffsetOld4, subTextureSearch4, true);
+        addButton(3*diff + test[6], diff2, subMoveOutOffsetOld, subTextureSearch1, true, false);
+        addButton(3*diff + test[6], 2*diff2, subMoveOutOffsetOld2, subTextureSearch2, true, false);
+        addButton(3*diff + test[6], 3*diff2, subMoveOutOffsetOld3, subTextureSearch3, true, false);
+        addButton(3*diff + test[6], 4*diff2, subMoveOutOffsetOld4, subTextureSearch4, true, false);
     }
 }
 
-function addButton(offset, heightOffset, moveOutOffset, texture, isSmaller){
+function addButton(offset, heightOffset, moveOutOffset, texture, isSmaller, isSmallest){
     mat4.identity(mvMatrix);
     mat4.translate(mvMatrix, [0.0, moveOutOffset, -8.0]);
 
     mat4.translate(mvMatrix, [offset, heightOffset, 0.0]);
     if(isSmaller){
         mat4.scale(mvMatrix, [1.0, 0.4, 1.0]);
+    } else if(isSmallest){
+         mat4.scale(mvMatrix, [0.5, 0.7, 1.0]);
     }
     gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
     gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, cubeVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
