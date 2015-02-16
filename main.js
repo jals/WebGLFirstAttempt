@@ -63,8 +63,9 @@ function keyUp(e){
             oldSelected = selected;
             selected -=1 ;
             resetVariables();
+            bounce()
         }
-    } else if(e.keyCode == 38){
+    } else if(e.keyCode == 38){ //up
         if(menuUp && subSelected < subSelectedArray[selected]){
             subSelected+=1;
         }
@@ -73,8 +74,9 @@ function keyUp(e){
             oldSelected = selected;
             selected += 1;
             resetVariables();
+            bounce(0);
         }
-    } else if(e.keyCode == 40){
+    } else if(e.keyCode == 40){ //down
         if(menuUp && subSelected > 0){
             subSelected-=1;
         }
@@ -381,6 +383,56 @@ var subMoveOutOffsetOld2 = -6.6;
 var subMoveOutOffsetOld3 = -6.6;
 var subMoveOutOffsetOld4 = -6.6;
 
+var test = [0, 0, 0, 0, 0, 0, 0];
+
+function negBounce(index){
+    test[index] = -0.1;
+    setTimeout(function(){
+        test[index] = -0.2;
+        setTimeout(function(){
+            test[index] = -0.3;
+            setTimeout(function(){
+                test[index] = -0.2;
+                setTimeout(function(){
+                    test[index] = -0.1;
+                    setTimeout(function(){
+                        test[index] = 0.0;
+                    }, 50);
+                }, 50);
+            }, 50);
+        }, 50);
+    }, 50);
+}
+function posBounce(index){
+    test[index] = 0.1;
+    setTimeout(function(){
+        test[index] = 0.2;
+        setTimeout(function(){
+            test[index] = 0.3;
+            setTimeout(function(){
+                test[index] = 0.2;
+                setTimeout(function(){
+                    test[index] = 0.1;
+                    setTimeout(function(){
+                        test[index] = 0.0;
+                    }, 50);
+                }, 50);
+            }, 50);
+        }, 50);
+    }, 50);
+}
+
+function bounce(){
+    var index;
+    for(index = 0; index < 7; index++){
+        if(index < selected){
+            negBounce(index);
+        } else {
+            posBounce(index);
+        }
+    }
+}
+
 function drawScene() {
     gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -391,54 +443,55 @@ function drawScene() {
 
     var diff = 2.1;
     var diff2 = 0.87;
-    addButton(-3*diff, 0, moveOutOffset4, textureSettings, false);
-    addButton(-2*diff, 0, moveOutOffset3, textureApps, false);
-    addButton(-1*diff, 0, moveOutOffset2, textureHome, false);
-    addButton(0, 0, moveOutOffset1, textureTV, false);
-    addButton(diff, 0, moveOutOffset2, textureRecordings, false);
-    addButton(2*diff, 0, moveOutOffset3, textureTVShows, false);
-    addButton(3*diff, 0, moveOutOffset4, textureSearch, false);
+
+    addButton(-3*diff + test[0], 0, moveOutOffset4, textureSettings, false);
+    addButton(-2*diff + test[1], 0, moveOutOffset3, textureApps, false);
+    addButton(-1*diff + test[2], 0, moveOutOffset2, textureHome, false);
+    addButton(0 + test[3], 0, moveOutOffset1, textureTV, false);
+    addButton(diff + test[4], 0, moveOutOffset2, textureRecordings, false);
+    addButton(2*diff + test[5], 0, moveOutOffset3, textureTVShows, false);
+    addButton(3*diff + test[6], 0, moveOutOffset4, textureSearch, false);
 
     if(selected == 2){
-        addButton(-1*diff, diff2, subMoveOutOffsetCurrent, subTextureHome1, true);
-        addButton(-1*diff, 2*diff2, subMoveOutOffsetCurrent2, subTextureHome2, true);
-        addButton(-1*diff, 3*diff2, subMoveOutOffsetCurrent3, subTextureHome3, true);
-        addButton(-1*diff, 4*diff2, subMoveOutOffsetCurrent4, subTextureHome4, true);
+        addButton(-1*diff + test[2], diff2, subMoveOutOffsetCurrent, subTextureHome1, true);
+        addButton(-1*diff + test[2], 2*diff2, subMoveOutOffsetCurrent2, subTextureHome2, true);
+        addButton(-1*diff + test[2], 3*diff2, subMoveOutOffsetCurrent3, subTextureHome3, true);
+        addButton(-1*diff + test[2], 4*diff2, subMoveOutOffsetCurrent4, subTextureHome4, true);
     } else if(selected == 3){
-        addButton(0, diff2, subMoveOutOffsetCurrent, subTextureTV1, true);
-        addButton(0, 2*diff2, subMoveOutOffsetCurrent2, subTextureTV2, true);
+        addButton(0 + test[3], diff2, subMoveOutOffsetCurrent, subTextureTV1, true);
+        addButton(0 + test[3], 2*diff2, subMoveOutOffsetCurrent2, subTextureTV2, true);
     } else if(selected == 4){
-        addButton(diff, diff2, subMoveOutOffsetCurrent, subTextureRecordings1, true);
-        addButton(diff, 2*diff2, subMoveOutOffsetCurrent2, subTextureRecordings2, true);
+        addButton(diff + test[4], diff2, subMoveOutOffsetCurrent, subTextureRecordings1, true);
+        addButton(diff + test[4], 2*diff2, subMoveOutOffsetCurrent2, subTextureRecordings2, true);
     } else if(selected == 5){
-        addButton(2*diff, diff2, subMoveOutOffsetCurrent, subTextureTVShows1, true);
-        addButton(2*diff, 2*diff2, subMoveOutOffsetCurrent2, subTextureTVShows2, true);
+        addButton(2*diff + test[5], diff2, subMoveOutOffsetCurrent, subTextureTVShows1, true);
+        addButton(2*diff + test[5], 2*diff2, subMoveOutOffsetCurrent2, subTextureTVShows2, true);
     } else if(selected == 6){
-        addButton(3*diff, diff2, subMoveOutOffsetCurrent, subTextureSearch1, true);
-        addButton(3*diff, 2*diff2, subMoveOutOffsetCurrent2, subTextureSearch2, true);
-        addButton(3*diff, 3*diff2, subMoveOutOffsetCurrent3, subTextureSearch3, true);
-        addButton(3*diff, 4*diff2, subMoveOutOffsetCurrent4, subTextureSearch4, true);
+        addButton(3*diff + test[6], diff2, subMoveOutOffsetCurrent, subTextureSearch1, true);
+        addButton(3*diff + test[6], 2*diff2, subMoveOutOffsetCurrent2, subTextureSearch2, true);
+        addButton(3*diff + test[6], 3*diff2, subMoveOutOffsetCurrent3, subTextureSearch3, true);
+        addButton(3*diff + test[6], 4*diff2, subMoveOutOffsetCurrent4, subTextureSearch4, true);
     }
 
     if(oldSelected == 2){
-        addButton(-1*diff, diff2, subMoveOutOffsetOld, subTextureHome1, true);
-        addButton(-1*diff, 2*diff2, subMoveOutOffsetOld2, subTextureHome2, true);
-        addButton(-1*diff, 3*diff2, subMoveOutOffsetOld3, subTextureHome3, true);
-        addButton(-1*diff, 4*diff2, subMoveOutOffsetOld4, subTextureHome4, true);
+        addButton(-1*diff + test[2], diff2, subMoveOutOffsetOld, subTextureHome1, true);
+        addButton(-1*diff + test[2], 2*diff2, subMoveOutOffsetOld2, subTextureHome2, true);
+        addButton(-1*diff + test[2], 3*diff2, subMoveOutOffsetOld3, subTextureHome3, true);
+        addButton(-1*diff + test[2], 4*diff2, subMoveOutOffsetOld4, subTextureHome4, true);
     } else if(oldSelected == 3){
-        addButton(0, diff2, subMoveOutOffsetOld, subTextureTV1, true);
-        addButton(0, 2*diff2, subMoveOutOffsetOld2, subTextureTV2, true);
+        addButton(0 + test[3], diff2, subMoveOutOffsetOld, subTextureTV1, true);
+        addButton(0 + test[3], 2*diff2, subMoveOutOffsetOld2, subTextureTV2, true);
     } else if(oldSelected == 4){
-        addButton(diff, diff2, subMoveOutOffsetOld, subTextureRecordings1, true);
-        addButton(diff, 2*diff2, subMoveOutOffsetOld2, subTextureRecordings2, true);
+        addButton(diff + test[4], diff2, subMoveOutOffsetOld, subTextureRecordings1, true);
+        addButton(diff + test[4], 2*diff2, subMoveOutOffsetOld2, subTextureRecordings2, true);
     } else if(oldSelected == 5){
-        addButton(2*diff, diff2, subMoveOutOffsetOld, subTextureTVShows1, true);
-        addButton(2*diff, 2*diff2, subMoveOutOffsetOld2, subTextureTVShows2, true);
+        addButton(2*diff + test[5], diff2, subMoveOutOffsetOld, subTextureTVShows1, true);
+        addButton(2*diff + test[5], 2*diff2, subMoveOutOffsetOld2, subTextureTVShows2, true);
     } else if(oldSelected == 6){
-        addButton(3*diff, diff2, subMoveOutOffsetOld, subTextureSearch1, true);
-        addButton(3*diff, 2*diff2, subMoveOutOffsetOld2, subTextureSearch2, true);
-        addButton(3*diff, 3*diff2, subMoveOutOffsetOld3, subTextureSearch3, true);
-        addButton(3*diff, 4*diff2, subMoveOutOffsetOld4, subTextureSearch4, true);
+        addButton(3*diff + test[6], diff2, subMoveOutOffsetOld, subTextureSearch1, true);
+        addButton(3*diff + test[6], 2*diff2, subMoveOutOffsetOld2, subTextureSearch2, true);
+        addButton(3*diff + test[6], 3*diff2, subMoveOutOffsetOld3, subTextureSearch3, true);
+        addButton(3*diff + test[6], 4*diff2, subMoveOutOffsetOld4, subTextureSearch4, true);
     }
 }
 
@@ -528,9 +581,6 @@ function animate()
                 oldSelected = -1;
                 selectionChanged = false;
             }
-           // smoo1Timeout();
-           // smoo2Timeout();
-           // selectionChanged = false;
         }
     } else {
         if(moveOutOffset1 > -10){
