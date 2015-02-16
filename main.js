@@ -433,7 +433,7 @@ var subMoveOutOffsetOld4 = -6.6;
 
 var test = [0, 0, 0, 0, 0, 0, 0];
 
-function negBounce(index){
+function negSmallBounce(index){
     test[index] = -0.1;
     setTimeout(function(){
         test[index] = -0.2;
@@ -451,7 +451,37 @@ function negBounce(index){
         }, 50);
     }, 50);
 }
-function posBounce(index){
+function negBigBounce(index){
+    test[index] = -0.1;
+    setTimeout(function(){
+        test[index] = -0.2;
+        setTimeout(function(){
+            test[index] = -0.3;
+            setTimeout(function(){
+                test[index] = -0.4;
+                setTimeout(function(){
+                    test[index] = -0.5;
+                    setTimeout(function(){
+                        test[index] = -0.4;
+                        setTimeout(function(){
+                            test[index] = -0.3;
+                            setTimeout(function(){
+                                test[index] = -0.2;
+                                setTimeout(function(){
+                                    test[index] = -0.1;
+                                    setTimeout(function(){
+                                        test[index] = 0.0;
+                                    }, 50);
+                                }, 50);
+                            }, 50);
+                        }, 50);
+                    }, 50);
+                }, 50);
+            }, 50);
+        }, 50);
+    }, 50);
+}
+function posSmallBounce(index){
     test[index] = 0.1;
     setTimeout(function(){
         test[index] = 0.2;
@@ -469,14 +499,52 @@ function posBounce(index){
         }, 50);
     }, 50);
 }
+function posBigBounce(index){
+    test[index] = 0.1;
+    setTimeout(function(){
+        test[index] = 0.2;
+        setTimeout(function(){
+            test[index] = 0.3;
+            setTimeout(function(){
+                test[index] = 0.4;
+                setTimeout(function(){
+                    test[index] = 0.5;
+                    setTimeout(function(){
+                        test[index] = 0.4;
+                        setTimeout(function(){
+                            test[index] = 0.3;
+                            setTimeout(function(){
+                                test[index] = 0.2;
+                                setTimeout(function(){
+                                    test[index] = 0.1;
+                                    setTimeout(function(){
+                                        test[index] = 0.0;
+                                    }, 50);
+                                }, 50);
+                            }, 50);
+                        }, 50);
+                    }, 50);
+                }, 50);
+            }, 50);
+        }, 50);
+    }, 50);
+}
 
 function bounce(){
     var index;
     for(index = 0; index < 7; index++){
-        if(index < selected){
-            negBounce(index);
+        if((oldSelected - selected) > 0){ //came from the right
+            if(index <= selected){
+                negBigBounce(index);
+            } else {
+                posSmallBounce(index);
+            }
         } else {
-            posBounce(index);
+            if(index < selected){
+                negSmallBounce(index);
+            } else {
+                posBigBounce(index);
+            }
         }
     }
 }
