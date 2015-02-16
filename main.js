@@ -22,9 +22,7 @@ function throttle(fn) {
       deferTimer;
   return function () {
     var context = this;
-
-    var now = +new Date,
-        args = arguments;
+    var now = +new Date, args = arguments;
     if (last && now < last + threshhold) {
       // hold on to it
       clearTimeout(deferTimer);
@@ -66,6 +64,7 @@ function keyUp(e){
             menuUp = true;
             fadeIn(1);
         }
+        initTextures();
     } else if(e.keyCode == 37){ //left
         if(menuUp && selected > 0){
             oldSelected = selected;
@@ -80,6 +79,7 @@ function keyUp(e){
             subMoveOutOffsetOld3 = -5.4;
             subMoveOutOffsetOld4 = -5.4;
         }
+        initTextures();
     } else if(e.keyCode == 38){
         console.log('up');
     } else if(e.keyCode == 39){ //right
@@ -96,6 +96,7 @@ function keyUp(e){
             subMoveOutOffsetOld3 = -5.4;
             subMoveOutOffsetOld4 = -5.4;
         }
+        initTextures();
     } else if(e.keyCode == 40){
         console.log('down');
     }
@@ -211,37 +212,41 @@ var subTextureSearch3;
 var subTextureSearch4;
 
 function initTextures() {
-    textureSettings = getTexture("SETTINGS", "img/settings.png");
-    textureApps = getTexture("APPS", "img/apps.png");
-    textureHome = getTexture("JARRED", "img/Home.png");
-    textureTV = getTexture("LIVE TV", "img/Live_TV.png");
-    textureRecordings = getTexture("RECORDINGS", "img/recorded.png");
-    textureTVShows = getTexture("TV SHOWS", "img/on_demand.png");
-    textureSearch = getTexture("SEARCH", "img/search.png");
+    textureSettings = getTexture("SETTINGS", "img/settings.png", selected == 0);
+    textureApps = getTexture("APPS", "img/apps.png", selected == 1);
+    textureHome = getTexture("JARRED", "img/Home.png", selected == 2);
+    textureTV = getTexture("LIVE TV", "img/Live_TV.png", selected == 3);
+    textureRecordings = getTexture("RECORDINGS", "img/recorded.png", selected == 4);
+    textureTVShows = getTexture("TV SHOWS", "img/on_demand.png", selected == 5);
+    textureSearch = getTexture("SEARCH", "img/search.png", selected == 6);
    
-    subTextureHome1 = getText("FAMILY");
-    subTextureHome2 = getText("ANDREA");
-    subTextureHome3 = getText("COOPER");
-    subTextureHome4 = getText("OPTIONS");
-    subTextureTV1 = getText("GUIDE");
-    subTextureTV2 = getText("WHAT'S ON");
-    subTextureRecordings1 = getText("SETUP");
-    subTextureRecordings2 = getText("RECENT");
-    subTextureTVShows1 = getText("POPULAR");
-    subTextureTVShows2 = getText("FAVOURITES");
-    subTextureSearch1 = getText("DISTRICT B13");
-    subTextureSearch2 = getText("PARKOUR");
-    subTextureSearch3 = getText("NETFLIX");
-    subTextureSearch4 = getText("CLEAR RECENT");
+    subTextureHome1 = getText("FAMILY", false);
+    subTextureHome2 = getText("ANDREA", false);
+    subTextureHome3 = getText("COOPER", false);
+    subTextureHome4 = getText("OPTIONS", false);
+    subTextureTV1 = getText("GUIDE", false);
+    subTextureTV2 = getText("WHAT'S ON", false);
+    subTextureRecordings1 = getText("SETUP", false);
+    subTextureRecordings2 = getText("RECENT", false);
+    subTextureTVShows1 = getText("POPULAR", false);
+    subTextureTVShows2 = getText("FAVOURITES", false);
+    subTextureSearch1 = getText("DISTRICT B13", false);
+    subTextureSearch2 = getText("PARKOUR", false);
+    subTextureSearch3 = getText("NETFLIX", false);
+    subTextureSearch4 = getText("CLEAR RECENT", false);
 }
 
-function getTexture(text, imagePath){
+function getTexture(text, imagePath, isSelected){
     var canvas = document.createElement('canvas');
     var ctx = canvas.getContext('2d');
     canvas.width  = 200;
     canvas.height = 130;
     var img = new Image();
 
+    if(isSelected){
+        ctx.fillStyle = 'rgba(29, 136, 114, 0.5)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
     ctx.fillStyle = 'white';
     ctx.font = "35px calibri";
     ctx.textAlign = 'center';            
@@ -268,6 +273,10 @@ function getText(text){
     canvas.height = 50;
     var img = new Image();
 
+    if(false){
+        ctx.fillStyle = 'rgba(29, 136, 114, 0.5)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
     ctx.fillStyle = 'white';
     ctx.font = "30px calibri";
     ctx.textAlign = 'center';            
@@ -275,7 +284,7 @@ function getText(text){
 
     var texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([77, 77, 77, 255]));
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([255, 0, 0, 255]));
     
     handleTextureLoaded(canvas, texture);
     return texture;
