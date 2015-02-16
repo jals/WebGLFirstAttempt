@@ -39,6 +39,8 @@ function throttle(fn) {
 
 var menuUp = true;
 var selected = 3;
+var subSelected = 0;
+var subSelectedArray = [0, 4, 4, 2, 2, 2, 4];
 var oldSelected = -1;
 var selectionChanged = false;
 
@@ -52,54 +54,45 @@ function keyUp(e){
             fadeOut(7);
         } else {
             selected = 3;
-            selectionChanged = true;
-            subMoveOutOffsetCurrent = -6.6;
-            subMoveOutOffsetCurrent2 = -6.6;
-            subMoveOutOffsetCurrent3 = -6.6;
-            subMoveOutOffsetCurrent4 = -6.6;
-            subMoveOutOffsetOld = -5.4;
-            subMoveOutOffsetOld2 = -5.4;
-            subMoveOutOffsetOld3 = -5.4;
-            subMoveOutOffsetOld4 = -5.4;
+            resetVariables();
             menuUp = true;
             fadeIn(1);
         }
-        initTextures();
     } else if(e.keyCode == 37){ //left
         if(menuUp && selected > 0){
             oldSelected = selected;
             selected -=1 ;
-            selectionChanged = true;
-            subMoveOutOffsetCurrent = -6.6;
-            subMoveOutOffsetCurrent2 = -6.6;
-            subMoveOutOffsetCurrent3 = -6.6;
-            subMoveOutOffsetCurrent4 = -6.6;
-            subMoveOutOffsetOld = -5.4;
-            subMoveOutOffsetOld2 = -5.4;
-            subMoveOutOffsetOld3 = -5.4;
-            subMoveOutOffsetOld4 = -5.4;
+            resetVariables();
         }
-        initTextures();
     } else if(e.keyCode == 38){
-        console.log('up');
+        if(menuUp && subSelected < subSelectedArray[selected]){
+            subSelected+=1;
+        }
     } else if(e.keyCode == 39){ //right
         if(menuUp && selected < 6){
             oldSelected = selected;
             selected += 1;
-            selectionChanged = true;
-            subMoveOutOffsetCurrent = -6.6;
-            subMoveOutOffsetCurrent2 = -6.6;
-            subMoveOutOffsetCurrent3 = -6.6;
-            subMoveOutOffsetCurrent4 = -6.6;
-            subMoveOutOffsetOld = -5.4;
-            subMoveOutOffsetOld2 = -5.4;
-            subMoveOutOffsetOld3 = -5.4;
-            subMoveOutOffsetOld4 = -5.4;
+            resetVariables();
         }
-        initTextures();
     } else if(e.keyCode == 40){
-        console.log('down');
+        if(menuUp && subSelected > 0){
+            subSelected-=1;
+        }
     }
+    initTextures();
+}
+
+function resetVariables(){
+    selectionChanged = true;
+    subSelected = 0;
+    subMoveOutOffsetCurrent = -6.6;
+    subMoveOutOffsetCurrent2 = -6.6;
+    subMoveOutOffsetCurrent3 = -6.6;
+    subMoveOutOffsetCurrent4 = -6.6;
+    subMoveOutOffsetOld = -5.4;
+    subMoveOutOffsetOld2 = -5.4;
+    subMoveOutOffsetOld3 = -5.4;
+    subMoveOutOffsetOld4 = -5.4;
 }
 
 function fadeOut(fade){
@@ -212,28 +205,28 @@ var subTextureSearch3;
 var subTextureSearch4;
 
 function initTextures() {
-    textureSettings = getTexture("SETTINGS", "img/settings.png", selected == 0);
-    textureApps = getTexture("APPS", "img/apps.png", selected == 1);
-    textureHome = getTexture("JARRED", "img/Home.png", selected == 2);
-    textureTV = getTexture("LIVE TV", "img/Live_TV.png", selected == 3);
-    textureRecordings = getTexture("RECORDINGS", "img/recorded.png", selected == 4);
-    textureTVShows = getTexture("TV SHOWS", "img/on_demand.png", selected == 5);
-    textureSearch = getTexture("SEARCH", "img/search.png", selected == 6);
+    textureSettings = getTexture("SETTINGS", "img/settings.png", selected == 0 && subSelected == 0); 
+    textureApps = getTexture("APPS", "img/apps.png", selected == 1 && subSelected == 0); 
+    textureHome = getTexture("JARRED", "img/Home.png", selected == 2 && subSelected == 0); 
+    textureTV = getTexture("LIVE TV", "img/Live_TV.png", selected == 3 && subSelected == 0); 
+    textureRecordings = getTexture("RECORDINGS", "img/recorded.png", selected == 4 && subSelected == 0); 
+    textureTVShows = getTexture("TV SHOWS", "img/on_demand.png", selected == 5 && subSelected == 0); 
+    textureSearch = getTexture("SEARCH", "img/search.png", selected == 6 && subSelected == 0); 
    
-    subTextureHome1 = getText("FAMILY", false);
-    subTextureHome2 = getText("ANDREA", false);
-    subTextureHome3 = getText("COOPER", false);
-    subTextureHome4 = getText("OPTIONS", false);
-    subTextureTV1 = getText("GUIDE", false);
-    subTextureTV2 = getText("WHAT'S ON", false);
-    subTextureRecordings1 = getText("SETUP", false);
-    subTextureRecordings2 = getText("RECENT", false);
-    subTextureTVShows1 = getText("POPULAR", false);
-    subTextureTVShows2 = getText("FAVOURITES", false);
-    subTextureSearch1 = getText("DISTRICT B13", false);
-    subTextureSearch2 = getText("PARKOUR", false);
-    subTextureSearch3 = getText("NETFLIX", false);
-    subTextureSearch4 = getText("CLEAR RECENT", false);
+    subTextureHome1 = getText("FAMILY", selected == 2 && subSelected == 1);
+    subTextureHome2 = getText("ANDREA", selected == 2 && subSelected == 2);
+    subTextureHome3 = getText("COOPER", selected == 2 && subSelected == 3);
+    subTextureHome4 = getText("OPTIONS", selected == 2 && subSelected == 4);
+    subTextureTV1 = getText("GUIDE", selected == 3 && subSelected == 1);
+    subTextureTV2 = getText("WHAT'S ON", selected == 3 && subSelected == 2);
+    subTextureRecordings1 = getText("SETUP", selected == 4 && subSelected == 1);
+    subTextureRecordings2 = getText("RECENT", selected == 4 && subSelected == 2);
+    subTextureTVShows1 = getText("POPULAR", selected == 5 && subSelected == 1);
+    subTextureTVShows2 = getText("FAVOURITES", selected == 5 && subSelected == 2);
+    subTextureSearch1 = getText("DISTRICT B13", selected == 6 && subSelected == 1);
+    subTextureSearch2 = getText("PARKOUR", selected == 6 && subSelected == 2);
+    subTextureSearch3 = getText("NETFLIX", selected == 6 && subSelected == 3);
+    subTextureSearch4 = getText("CLEAR RECENT", selected == 6 && subSelected == 4);
 }
 
 function getTexture(text, imagePath, isSelected){
@@ -266,14 +259,14 @@ function getTexture(text, imagePath, isSelected){
     return texture;
 }
 
-function getText(text){
+function getText(text, isSelected){
     var canvas = document.createElement('canvas');
     var ctx = canvas.getContext('2d');
     canvas.width  = 200;
     canvas.height = 50;
     var img = new Image();
 
-    if(false){
+    if(isSelected){
         ctx.fillStyle = 'rgba(29, 136, 114, 0.5)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
