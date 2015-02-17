@@ -1,27 +1,26 @@
 <html>
 <head>
     <title>Here</title>
+    <!--This style allows for the image and video to inhabit the same space as the canvas, and effectively be used as a background-->
     <style>
         #bkgd,
+        #bkgd2,
         #canvas {            
             position: absolute;
         }
     </style>
     <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
-
     <script type="text/javascript" src="glMatrix-0.9.5.min.js"></script>
-    <!--script type="text/javascript" src="webgl-utils.js"></script-->
-
     <script id="shader-fs" type="x-shader/x-fragment">
         precision mediump float;
         varying vec2 vTextureCoord;
         uniform sampler2D uSampler;
         void main(void) {
             vec4 texColor = texture2D(uSampler, vTextureCoord.st);
-            gl_FragColor = mix(vec4(0.3, 0.3, 0.3, 1.0), texColor, texColor.a);
+            //Mix the texture color with gray, using the texture colour alpha.
+            gl_FragColor = mix(vec4(0.3, 0.3, 0.3, 1.0), texColor, texColor.a); 
         }
     </script>
-
     <script id="shader-vs" type="x-shader/x-vertex">
         attribute vec3 aVertexPosition;
         attribute vec2 aTextureCoord;
@@ -33,13 +32,12 @@
             vTextureCoord = aTextureCoord;
         }
     </script>
-<script type="text/javascript" src="main.js"></script>
+    <script type="text/javascript" src="main.js"></script>
 </head>
-
-
 <body onload="webGLStart();">
     <img id="bkgd" src="img/background.png" style="width:1280px;height:720px;">
-    <!--video id="bkgd" width="1280" height="720" autoplay loop muted><source src="vid/mov_bbb.mp4" type="video/mp4">No video</video-->
+    <!--The video is hidden by the javascript initially. It is set to autoplay, and is muted because it gets annoyingly very quickly! -->
+    <video id="bkgd2" width="1280" height="720" autoplay loop muted><source src="vid/mov_bbb.mp4" type="video/mp4"></video>
     <canvas id="canvas" style="border: none;" width="1280" height="720"></canvas>
 </body>
 
